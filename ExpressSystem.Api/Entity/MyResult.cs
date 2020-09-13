@@ -3,35 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace UniformMSAPI.Entity
+namespace ExpressSystem.Api.Entity
 {
-    public class JabResult
+    public class MyResult
     {
         public int Code { get; set; }
         public string Msg { get; set; }
         public object Data { get; set; }
 
 
-        public static JabResult OK(string msg = "")
+        public static MyResult OK(string msg = "")
         {
             return Result(ResultCode.OK, msg);
         }
-        public static JabResult OK(object data)
+        public static MyResult OK(object data)
         {
             return Result(ResultCode.OK, "", data);
         }
-        public static JabResult OK(string msg, object data)
+        public static MyResult OK(string msg, object data)
         {
             return Result(ResultCode.OK, msg, data);
         }
-        public static JabResult Error(string msg = "")
+        public static MyResult Error(string msg = "")
         {
             return Result(ResultCode.ERROR, msg);
         }
 
-        public static JabResult Result(ResultCode code, string msg, object data = null)
+        public static MyResult Result(ResultCode code, string msg, object data = null)
         {
-            return new JabResult
+            return new MyResult
             {
                 Code = (int)code,
                 Msg = msg,

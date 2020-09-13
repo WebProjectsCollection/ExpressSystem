@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace UniformMSAPI.Entity
+namespace ExpressSystem.Api.Entity
 {
     public class UserInfo
     {

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using UniformMSAPI.Entity;
+using ExpressSystem.Api.Entity;
 
 namespace ExpressSystem.Api.Filters
 {
@@ -23,7 +23,7 @@ namespace ExpressSystem.Api.Filters
             if (context.Exception is MsgException)
             {
                 // 返回ERROR响应码
-                context.Result = new JsonResult(JabResult.Error(context.Exception.Message));
+                context.Result = new JsonResult(MyResult.Error(context.Exception.Message));
                 context.ExceptionHandled = true;
                 context.HttpContext.Response.Clear();
                 context.HttpContext.Response.Headers["Access-Control-Allow-Origin"] = "*";

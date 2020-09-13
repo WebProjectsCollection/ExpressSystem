@@ -22,13 +22,5 @@ namespace ExpressSystem.Api.Utilities
 
             }
         }
-
-        public static string LDAP_API
-        {
-            get
-            {
-                return Environment.GetEnvironmentVariable("LDAP_API") ?? ConfigurationManager.AppSettings["LDAP_API"];
-            }
-        }
     }
 }

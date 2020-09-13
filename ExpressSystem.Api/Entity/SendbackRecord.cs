@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace ExpressSystem.Api.Entity
 {
-    public class MsgException : Exception
+    public class SendbackRecord
     {
-        public MsgException(string msg) : base(msg)
-        {
-        }
+        public int backNumber { get; set; }
+        public int giveoutRecordId { get; set; }
     }
 }
