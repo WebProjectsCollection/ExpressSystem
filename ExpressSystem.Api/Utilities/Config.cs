@@ -22,5 +22,9 @@ namespace ExpressSystem.Api.Utilities
 
             }
         }
+        public static string DefaultPassword
+        {
+            get { return "123456"; }
+        }
     }
 }

@@ -16,9 +16,9 @@ namespace ExpressSystem.Api.Controllers
     {
         // GET: api/Role
         [HttpGet("list")]
-        public MyResult GetList(int siteId)
+        public MyResult GetList()
         {
-            List<Object> roleList = RoleBLL.GetRoleList(siteId);
+            List<Object> roleList = RoleBLL.GetRoleList();
             return MyResult.OK(roleList);
         }
 

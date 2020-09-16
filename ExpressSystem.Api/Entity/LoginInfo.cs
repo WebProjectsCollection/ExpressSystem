@@ -12,7 +12,5 @@ namespace ExpressSystem.Api.Entity
 
         public string Password { get; set; }
 
-        public string SiteId { get; set; }
-
     }
 }

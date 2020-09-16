@@ -9,12 +9,11 @@ namespace ExpressSystem.Api.BLL
 {
     public class RoleBLL
     {
-        public static List<Object> GetRoleList(int siteId)
+        public static List<Object> GetRoleList()
         {
             List<Object> roleList = new List<Object>();
             DataTable dt = JabMySqlHelper.ExecuteDataTable(Config.DBConnection,
-                "select * from cf_role where siteId=@siteId",
-                new MySqlParameter("@siteId", siteId));
+                "select * from cf_role");
 
             if (dt != null && dt.Rows.Count > 0)
             {

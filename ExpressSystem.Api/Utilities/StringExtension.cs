@@ -479,7 +479,7 @@ namespace ExpressSystem.Api.Utilities
             MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
             byte[] bytes = Encoding.UTF8.GetBytes(input);
             string result = BitConverter.ToString(md5.ComputeHash(bytes));
-            return result.Replace("-", "");
+            return result.Replace("-", "").ToUpper();
         }
     }
 }

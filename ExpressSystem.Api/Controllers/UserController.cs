@@ -19,41 +19,10 @@ namespace ExpressSystem.Api.Controllers
     {
         // GET: api/User
         [HttpGet]
-        public MyResult GetList(int siteId)
+        public MyResult GetList()
         {
-            List<Object> roleList = UserBLL.GetUserList(siteId);
+            List<Object> roleList = UserBLL.GetUserList();
             return MyResult.OK(roleList);
-        }
-
-        // GET: api/User/5
-        [HttpGet("info")]
-        public MyResult GetInfo(string badgeId = "", string employeeId = "")
-        {
-            object userObj = UserBLL.GetUserInfoById(badgeId, employeeId);
-            return userObj == null ? MyResult.Error("未找到员工信息") : MyResult.OK(userObj);
-        }
-
-        [HttpGet("stockInfo")]
-        public MyResult GetStockInfo(string badgeId = "")
-        {
-            object userObj = UserBLL.GetUserStockInfo(badgeId);
-            return userObj == null ? MyResult.Error("未找到员工信息") : MyResult.OK(userObj);
-        }
-
-        [HttpGet("getByRole")]
-        public MyResult GetByRole(string employeeId, int siteId, string roleCode)
-        {
-            object userObj = UserBLL.GetUserByRole(employeeId, siteId, roleCode);
-            return MyResult.OK(userObj);
-
-        }
-
-
-        [HttpGet("applyRecords")]
-        public MyResult GetapplyRecords(long employeeId)
-        {
-            object list = UserBLL.GetapplyRecords(employeeId);
-            return MyResult.OK(list);
         }
 
         // POST: api/User
@@ -61,20 +30,49 @@ namespace ExpressSystem.Api.Controllers
         public MyResult Post([FromBody] object data)
         {
             JObject obj = JObject.FromObject(data);
+            string userName = Convert.ToString(obj["userName"]);
+            string chineseName = Convert.ToString(obj["chineseName"]);
             int roleId = Convert.ToInt32(obj["roleId"]);
-            string ntid = Convert.ToString(obj["ntid"]);
-            string employeeId = Convert.ToString(obj["employeeId"]);
             bool isNew = Convert.ToBoolean(obj["isNew"]);
 
-            bool re = isNew ? UserBLL.AddNewUser(ntid, employeeId, roleId) : UserBLL.SaveUser(ntid, employeeId, roleId);
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return MyResult.Error("用户名不能为空！");
+            }
+            if (string.IsNullOrWhiteSpace(chineseName))
+            {
+                return MyResult.Error("姓名不能为空！");
+            }
+
+            bool re = isNew ? UserBLL.AddNewUser(userName, chineseName, roleId) : UserBLL.SaveUser(userName, chineseName, roleId);
+            return re ? MyResult.OK() : MyResult.Error();
+        }
+
+        [HttpPost("resetPassword")]
+        public MyResult ResetPassword([FromBody] object data)
+        {
+            JObject obj = JObject.FromObject(data);
+            string userName = Convert.ToString(obj["userName"]);
+
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return MyResult.Error("用户名不能为空！");
+            }
+
+            bool re = UserBLL.ResetPassword(userName);
             return re ? MyResult.OK() : MyResult.Error();
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{ntid}")]
-        public MyResult Delete(string ntid)
+        [HttpDelete("{userName}")]
+        public MyResult Delete(string userName)
         {
-            bool re = UserBLL.DeleteUser(ntid);
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return MyResult.Error("用户名不能为空！");
+            }
+
+            bool re = UserBLL.DeleteUser(userName);
             return re ? MyResult.OK() : MyResult.Error();
         }
 
