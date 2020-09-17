@@ -20,6 +20,8 @@ namespace ExpressSystem.Api.Entity
         public string SenderPhone { get; set; }
         public string SenderAddress { get; set; }
         public string Remark { get; set; }
+        public string Weight { get; set; }
+        public string BatchNo { get; set; }
         public string FlightNumber { get; set; }
         public string LandingTime { get; set; }
         public string Status { get; set; }

@@ -23,8 +23,8 @@ namespace ExpressSystem.Api.BLL
             string password = Config.DefaultPassword.ToMD5().ToMD5();
 
             JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
-                    $"INSERT INTO ex_orderinfo (ORDER_NUM,JBBW_NAME,JBBW_PHONE,JBBW_ADDRESS,SENDER_NAME,SENDER_PHONE,SENDER_ADDRESS,REMARKS,CreatedBy) " +
-                    $"VALUES (@OrderNumber,@JBBWName,@JBBWPhone,@JBBWAddress,@SenderName,@SenderPhone,@SenderAddress,@Remark,@UserName);",
+                    $"INSERT INTO ex_orderinfo (ORDER_NUM,JBBW_NAME,JBBW_PHONE,JBBW_ADDRESS,SENDER_NAME,SENDER_PHONE,SENDER_ADDRESS,STATUS,REMARKS,WEIGHT,BATCH_NUMBER,CreatedBy) " +
+                    $"VALUES (@OrderNumber,@JBBWName,@JBBWPhone,@JBBWAddress,@SenderName,@SenderPhone,@SenderAddress,@Status,@Remark,@Weight,@BatchNo,@UserName);",
                 new MySqlParameter("@OrderNumber", data.OrderNumber),
                 new MySqlParameter("@JBBWName", data.JBBWName),
                 new MySqlParameter("@JBBWPhone", data.JBBWPhone),
@@ -33,8 +33,36 @@ namespace ExpressSystem.Api.BLL
                 new MySqlParameter("@SenderPhone", data.SenderPhone),
                 new MySqlParameter("@SenderAddress", data.SenderAddress),
                 new MySqlParameter("@Remark", data.Remark),
+                new MySqlParameter("@Weight", data.Weight),
+                new MySqlParameter("@BatchNo", data.BatchNo),
+                new MySqlParameter("@Status", OrderStatusEnum.Created),
                 new MySqlParameter("@UserName", data.UserName));
             return true;
+        }
+
+        internal static List<object> GetBatchNos()
+        {
+            string sql = @" SELECT DISTINCT BATCH_NUMBER FROM  ex_orderinfo
+                            ORDER by CreateTime DESC ";
+
+            DataTable dt = JabMySqlHelper.ExecuteDataTable(Config.DBConnection, sql);
+            List<object> result = new List<object>();
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    string batchNo = Converter.TryToString(row[0]);
+                    if (!string.IsNullOrEmpty(batchNo))
+                    {
+                        result.Add(new
+                        {
+                            label = batchNo,
+                            value = batchNo
+                        });
+                    }
+                }
+            }
+            return result;
         }
 
         internal static List<OrderInfo> GetOrderList(OrderInfoParam searchParam, out int total)
@@ -98,7 +126,7 @@ namespace ExpressSystem.Api.BLL
                         JBBWName = Converter.TryToString(row["JBBW_NAME"]),
                         FlightNumber = Converter.TryToString(row["FLIGHT_NUM"]),
                         LandingTime = string.IsNullOrEmpty(Converter.TryToString(row["LANDING_TIME"])) ? "" : Converter.TryToDateTime(row["LANDING_TIME"]).ToString("yyyy-MM-dd HH:mm:ss"),
-                        Status = Converter.TryToString(row["STATUS"]),
+                        Status = OrderStatus.GetStatus(Converter.TryToString(row["STATUS"])),
                         CreateTime = Converter.TryToDateTime(row["CreateTime"]).ToString("yyyy-MM-dd HH:mm:ss"),
                         CreatedBy = Converter.TryToString(row["ChineseName"])
                     });

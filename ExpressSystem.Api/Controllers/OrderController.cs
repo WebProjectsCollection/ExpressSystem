@@ -32,6 +32,13 @@ namespace ExpressSystem.Api.Controllers
             return MyResult.OK(result);
         }
 
+        [HttpGet("batchNos")]
+        public MyResult GetBatchNos()
+        {
+            List<Object> result = OrderBLL.GetBatchNos();
+            return MyResult.OK(result);
+        }
+
         // POST: api/User
         [HttpPost]
         public MyResult Post([FromBody] OrderInfo data)
