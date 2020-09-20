@@ -178,6 +178,7 @@ namespace ExpressSystem.Api.BLL
                     UpdatedBy = Converter.TryToString(row["UpdateBy"]),
                 };
                 orderinfo.BatchNo = string.IsNullOrEmpty(orderinfo.BatchNo) ? null : orderinfo.BatchNo;
+                return orderinfo;
             }
             else
             {
