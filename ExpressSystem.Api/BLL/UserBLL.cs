@@ -32,7 +32,7 @@ namespace ExpressSystem.Api.BLL
                 var row = dt.Rows[0];
                 return new UserInfo
                 {
-                    UserName = Converter.TryToInt64(row["UserName"]),
+                    UserName = Converter.TryToString(row["UserName"]),
                     ChineseName = Converter.TryToString(row["ChineseName"]),
                     RoleName = Converter.TryToString(row["RoleName"]),
                     RoleId = Converter.TryToInt32(row["RoleId"]),
