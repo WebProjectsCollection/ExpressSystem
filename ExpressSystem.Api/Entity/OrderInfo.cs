@@ -45,4 +45,17 @@ namespace ExpressSystem.Api.Entity
         public string CreateTimeEndStr { get; set; }
         public string Status { get; set; }
     }
+
+    public class OrderStatusParam
+    {
+        public List<OrderInfo_F> dicOrders { get; set; }
+        public string UserName { get; set; }
+        public string Status { get; set; }
+
+        public class OrderInfo_F
+        {
+            public string Id { get; set; }
+            public string Order_Num { get; set; }
+        }
+    }
 }

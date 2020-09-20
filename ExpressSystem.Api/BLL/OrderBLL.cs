@@ -21,7 +21,7 @@ namespace ExpressSystem.Api.BLL
                 throw new MsgException("快递单号已存在，请检查！");
             }
 
-            JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
+            bool insertStuatus = JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
                     $"INSERT INTO ex_orderinfo (ORDER_NUM,JBBW_NAME,JBBW_PHONE,JBBW_ADDRESS,SENDER_NAME,SENDER_PHONE,SENDER_ADDRESS,STATUS,REMARKS,WEIGHT,BATCH_NUMBER,CreatedBy) " +
                     $"VALUES (@OrderNumber,@JBBWName,@JBBWPhone,@JBBWAddress,@SenderName,@SenderPhone,@SenderAddress,@Status,@Remark,@Weight,@BatchNo,@UserName);",
                 new MySqlParameter("@OrderNumber", data.OrderNumber),
@@ -35,7 +35,9 @@ namespace ExpressSystem.Api.BLL
                 new MySqlParameter("@Weight", data.Weight),
                 new MySqlParameter("@BatchNo", data.BatchNo),
                 new MySqlParameter("@Status", OrderStatusEnum.Created),
-                new MySqlParameter("@UserName", data.UserName));
+                new MySqlParameter("@UserName", data.UserName)) > 0;
+            if (insertStuatus)
+                AddOrderStatus(data.OrderNumber, data.Status);
             return true;
         }
 
@@ -49,7 +51,7 @@ namespace ExpressSystem.Api.BLL
                 throw new MsgException("快递单号不存在，请检查！");
             }
 
-            JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
+            bool updateStuatus = JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
                     @"UPDATE ex_orderinfo
                     SET
                         SENDER_PHONE = @SenderPhone,
@@ -77,7 +79,9 @@ namespace ExpressSystem.Api.BLL
                 new MySqlParameter("@Weight", data.Weight),
                 new MySqlParameter("@BatchNo", data.BatchNo),
                 new MySqlParameter("@Status", data.Status),
-                new MySqlParameter("@UserName", data.UserName));
+                new MySqlParameter("@UserName", data.UserName)) > 1;
+            if (updateStuatus)
+                AddOrderStatus(data.OrderNumber, data.Status);
             return true;
         }
 
@@ -256,6 +260,46 @@ namespace ExpressSystem.Api.BLL
             total = Convert.ToInt32(re);
 
             return recordList;
+        }
+
+        /// <summary>
+        /// 机场确认
+        /// </summary>
+        /// <param name="dicOrders">订单id,订单号</param>
+        /// <param name="status">状态</param>
+        /// <param name="userName">用户名</param>
+        /// <returns></returns>
+        public static bool BatchUpdateStatus(OrderStatusParam param)
+        {
+            string ids = string.Join(",", param.dicOrders.Select(t => t.Id).ToList());
+            bool upsucess = JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
+                     $@"UPDATE ex_orderinfo
+                            SET
+                                STATUS = @Status,
+                                UpdateBy = @UserName,
+                                UpdateTime = now()
+                            WHERE ID IN ({ids});",
+                 new MySqlParameter("@Status", param.Status),
+                 new MySqlParameter("@UserName", param.UserName)) > 0;
+            if (upsucess)
+            {
+                foreach (var item in param.dicOrders)
+                {
+                    AddOrderStatus(item.Order_Num, param.Status);
+                }
+            }
+            return true;
+        }
+
+        internal static bool AddOrderStatus(string orderNum, string status)
+        {
+            JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
+                    $@"INSERT INTO `ex_statusinfo`(`ORDER_NUM`, `UPDATE_TIME`, `UPDATE_STATUS`, `REMARKS`) 
+                           VALUES (@ORDER_NUM, now(), @UPDATE_STATUS, @REMARKS);",
+                new MySqlParameter("@ORDER_NUM", orderNum),
+                new MySqlParameter("@UPDATE_STATUS", OrderStatus.GetStatus(status)),
+                new MySqlParameter("@REMARKS", OrderStatusDetaill.GetStatus(status)));
+            return true;
         }
     }
 }

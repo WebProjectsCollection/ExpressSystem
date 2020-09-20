@@ -78,5 +78,12 @@ namespace ExpressSystem.Api.Controllers
             bool re = OrderBLL.UpdateOrder(data);
             return re ? MyResult.OK() : MyResult.Error();
         }
+
+        [HttpPost("updatestatus")]
+        public MyResult BatchUpdateStatus([FromBody] OrderStatusParam param)
+        {
+            bool re = OrderBLL.BatchUpdateStatus(param);
+            return re ? MyResult.OK() : MyResult.Error();
+        }
     }
 }
