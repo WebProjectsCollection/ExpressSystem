@@ -155,7 +155,7 @@ namespace ExpressSystem.Api.BLL
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
-                return new OrderInfo()
+                OrderInfo orderinfo = new OrderInfo()
                 {
                     ID = Converter.TryToInt64(row["ID"]),
                     OrderNumber = Converter.TryToString(row["ORDER_NUM"]),
@@ -177,6 +177,7 @@ namespace ExpressSystem.Api.BLL
                     UpdateTime = Converter.TryToDateTime(row["UpdateTime"]).ToString("yyyy-MM-dd HH:mm:ss"),
                     UpdatedBy = Converter.TryToString(row["UpdateBy"]),
                 };
+                orderinfo.BatchNo = string.IsNullOrEmpty(orderinfo.BatchNo) ? null : orderinfo.BatchNo;
             }
             else
             {
