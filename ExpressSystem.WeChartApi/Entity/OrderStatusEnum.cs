@@ -70,3 +70,4 @@ namespace ExpressSystem.WeChartApi.Entity
             }
         }
     }
+}
