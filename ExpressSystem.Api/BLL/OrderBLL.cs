@@ -37,7 +37,7 @@ namespace ExpressSystem.Api.BLL
                 new MySqlParameter("@Status", OrderStatusEnum.Created),
                 new MySqlParameter("@UserName", data.UserName)) > 0;
             if (insertStuatus)
-                AddOrderStatus(data.OrderNumber, data.Status);
+                AddOrderStatus(data.OrderNumber, OrderStatusEnum.Created.ToString());
             return true;
         }
 
