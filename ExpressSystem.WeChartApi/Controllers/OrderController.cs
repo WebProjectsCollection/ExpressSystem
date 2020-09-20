@@ -20,6 +20,22 @@ namespace ExpressSystem.WeChartApi.Controllers
             {
                 return MyResult.Error("快递单号不能为空！");
             }
+            if (string.IsNullOrWhiteSpace(data.SenderPhone))
+            {
+                return MyResult.Error("寄件人姓名不能为空！");
+            }
+            if (string.IsNullOrWhiteSpace(data.JBBWName))
+            {
+                return MyResult.Error("津巴布韦姓名不能为空！");
+            }
+            if (string.IsNullOrWhiteSpace(data.JBBWPhone))
+            {
+                return MyResult.Error("津巴布韦电话不能为空！");
+            }
+            if (string.IsNullOrWhiteSpace(data.JBBWAddress))
+            {
+                return MyResult.Error("津巴布韦地址不能为空！");
+            }
             bool re = OrderBLL.AddNewOrder(data);
             return re ? MyResult.OK() : MyResult.Error();   
         }
