@@ -22,7 +22,7 @@ namespace ExpressSystem.WeChartApi.BLL
             }
             string password = Config.DefaultPassword.ToMD5().ToMD5();
 
-            JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
+            bool insertStuatus = JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
                     $"INSERT INTO ex_orderinfo (ORDER_NUM,JBBW_NAME,JBBW_PHONE,JBBW_ADDRESS,SENDER_NAME,SENDER_PHONE,SENDER_ADDRESS,STATUS,REMARKS,WEIGHT,BATCH_NUMBER,CreatedBy) " +
                     $"VALUES (@OrderNumber,@JBBWName,@JBBWPhone,@JBBWAddress,@SenderName,@SenderPhone,@SenderAddress,@Status,@Remark,@Weight,@BatchNo,@UserName);",
                 new MySqlParameter("@OrderNumber", data.OrderNumber),
@@ -36,7 +36,9 @@ namespace ExpressSystem.WeChartApi.BLL
                 new MySqlParameter("@Weight", data.Weight),
                 new MySqlParameter("@BatchNo", data.BatchNo),
                 new MySqlParameter("@Status", OrderStatusEnum.Created),
-                new MySqlParameter("@UserName", data.UserName));
+                new MySqlParameter("@UserName", data.UserName)) > 0;
+            if (insertStuatus)
+                AddOrderStatus(data.OrderNumber, data.Status);
             return true;
         }
 
@@ -100,6 +102,17 @@ namespace ExpressSystem.WeChartApi.BLL
                 statusInfos.Last().LastFlag = true;
             }
             return statusInfos;
+        }
+
+        internal static bool AddOrderStatus(string orderNum, string status)
+        {
+            JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
+                    $@"INSERT INTO `ex_statusinfo`(`ORDER_NUM`, `UPDATE_TIME`, `UPDATE_STATUS`, `REMARKS`) 
+                           VALUES (@ORDER_NUM, now(), @UPDATE_STATUS, @REMARKS);",
+                new MySqlParameter("@ORDER_NUM", orderNum),
+                new MySqlParameter("@UPDATE_STATUS", OrderStatus.GetStatus(status)),
+                new MySqlParameter("@REMARKS", OrderStatusDetaill.GetStatus(status)));
+            return true;
         }
     }
 }
