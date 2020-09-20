@@ -53,4 +53,20 @@ namespace ExpressSystem.WeChartApi.Entity
             }
         }
     }
-}
+
+    public static class OrderStatusDetaill
+    {
+        public static string GetStatus(string status)
+        {
+            switch (status)
+            {
+                case "1001": return "您的订单已录入，正在等待发货";
+                case "1011": return "您的订单已被揽件，正在极速送往机场的路上";
+                case "1012": return "您的订单正在运输中，预计两个小时到津";
+                case "1013": return "您的订单已到津，正在等待派送";
+                case "1014": return "您的订单正在派送中，请保持电话通畅";
+                case "1021": return "您的订单已签收，感谢您对飞箭国际快递的关注";
+                default: return "--";
+            }
+        }
+    }
