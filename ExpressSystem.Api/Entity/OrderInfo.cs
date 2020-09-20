@@ -19,14 +19,17 @@ namespace ExpressSystem.Api.Entity
         public string SenderName { get; set; }
         public string SenderPhone { get; set; }
         public string SenderAddress { get; set; }
-        public string Remark { get; set; }
+        public string Remarks { get; set; }
         public string Weight { get; set; }
         public string BatchNo { get; set; }
         public string FlightNumber { get; set; }
         public string LandingTime { get; set; }
         public string Status { get; set; }
+        public string StatusStr { get; set; }
         public string CreateTime { get; set; }
         public string CreatedBy { get; set; }
+        public string UpdateTime { get; set; }
+        public string UpdatedBy { get; set; }
 
     }
 
@@ -34,6 +37,7 @@ namespace ExpressSystem.Api.Entity
     {
         public int PageIndex { get; set; }
         public int PageSize { get; set; }
+        public long? ID { get; set; }
         public string OrderNumber { get; set; }
         public string KeyWord { get; set; }
         public string FlightNumber { get; set; }

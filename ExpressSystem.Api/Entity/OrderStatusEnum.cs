@@ -43,8 +43,8 @@ namespace ExpressSystem.Api.Entity
             switch (status)
             {
                 case "1001": return "已下单";
-                case "1011": return "已发货";
-                case "1012": return "飞机运输中";
+                case "1011": return "已揽件";
+                case "1012": return "已发货/运送中";
                 case "1013": return "到津待派送";
                 case "1014": return "派送中";
                 case "1021": return "已签收";

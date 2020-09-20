@@ -20,7 +20,6 @@ namespace ExpressSystem.Api.BLL
             {
                 throw new MsgException("快递单号已存在，请检查！");
             }
-            string password = Config.DefaultPassword.ToMD5().ToMD5();
 
             JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
                     $"INSERT INTO ex_orderinfo (ORDER_NUM,JBBW_NAME,JBBW_PHONE,JBBW_ADDRESS,SENDER_NAME,SENDER_PHONE,SENDER_ADDRESS,STATUS,REMARKS,WEIGHT,BATCH_NUMBER,CreatedBy) " +
@@ -32,10 +31,52 @@ namespace ExpressSystem.Api.BLL
                 new MySqlParameter("@SenderName", data.SenderName),
                 new MySqlParameter("@SenderPhone", data.SenderPhone),
                 new MySqlParameter("@SenderAddress", data.SenderAddress),
-                new MySqlParameter("@Remark", data.Remark),
+                new MySqlParameter("@Remark", data.Remarks),
                 new MySqlParameter("@Weight", data.Weight),
                 new MySqlParameter("@BatchNo", data.BatchNo),
                 new MySqlParameter("@Status", OrderStatusEnum.Created),
+                new MySqlParameter("@UserName", data.UserName));
+            return true;
+        }
+
+        public static bool UpdateOrder(OrderInfo data)
+        {
+            object re = JabMySqlHelper.ExecuteScalar(Config.DBConnection,
+                              "select count(*) from ex_orderinfo where ID=@ID;",
+                          new MySqlParameter("@ID", data.ID));
+            if (Converter.TryToInt32(re) == 0)
+            {
+                throw new MsgException("快递单号不存在，请检查！");
+            }
+
+            JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
+                    @"UPDATE ex_orderinfo
+                    SET
+                        SENDER_PHONE = @SenderPhone,
+                        SENDER_NAME = @SenderName,
+                        SENDER_ADDRESS = @SenderAddress,
+                        JBBW_PHONE = @JBBWPhone,
+                        JBBW_NAME = @JBBWName,
+                        JBBW_ADDRESS = @JBBWAddress,
+                        REMARKS = @Remark,
+                        WEIGHT = @Weight,
+                        STATUS = @Status,
+                        BATCH_NUMBER = @BatchNo,
+                        UpdateTime = now(),
+                        UpdateBy = @UserName
+                    WHERE ID = @ID;",
+                new MySqlParameter("@OrderNumber", data.OrderNumber),
+                new MySqlParameter("@ID", data.ID),
+                new MySqlParameter("@JBBWName", data.JBBWName),
+                new MySqlParameter("@JBBWPhone", data.JBBWPhone),
+                new MySqlParameter("@JBBWAddress", data.JBBWAddress),
+                new MySqlParameter("@SenderName", data.SenderName),
+                new MySqlParameter("@SenderPhone", data.SenderPhone),
+                new MySqlParameter("@SenderAddress", data.SenderAddress),
+                new MySqlParameter("@Remark", data.Remarks),
+                new MySqlParameter("@Weight", data.Weight),
+                new MySqlParameter("@BatchNo", data.BatchNo),
+                new MySqlParameter("@Status", data.Status),
                 new MySqlParameter("@UserName", data.UserName));
             return true;
         }
@@ -63,6 +104,81 @@ namespace ExpressSystem.Api.BLL
                 }
             }
             return result;
+        }
+
+        internal static OrderInfo GetOrderDetail(OrderInfoParam searchParam)
+        {
+            OrderInfo orderInfo = new OrderInfo();
+            string sql = @"SELECT `ID`,
+                            `ORDER_NUM`,
+                            `USER_ID`,
+                            `SENDER_PHONE`,
+                            `SENDER_NAME`,
+                            `SENDER_ADDRESS`,
+                            `JBBW_PHONE`,
+                            `JBBW_NAME`,
+                            `JBBW_ADDRESS`,
+                            `REMARKS`,
+                            `WEIGHT`,
+                            `FLIGHT_NUM`,
+                            `LANDING_TIME`,
+                            `STATUS`,
+                            `BATCH_NUMBER`,
+                            `CreateTime`,
+                            `CreatedBy`,
+                            `UpdateTime`,
+                            `UpdateBy`
+                        FROM `ex_orderinfo`
+                        {0};";
+            List<MySqlParameter> param = new List<MySqlParameter>();
+
+            string where;
+            if (searchParam.ID != null)
+            {
+                where = " WHERE `ID` = @ID";
+                param.Add(new MySqlParameter("@ID", searchParam.ID));
+            }
+            else if (!string.IsNullOrEmpty(searchParam.OrderNumber))
+            {
+                where = " WHERE ORDER_NUM = @OrderNumber";
+                param.Add(new MySqlParameter("@OrderNumber", searchParam.OrderNumber));
+            }
+            else
+            {
+                throw new MsgException("参数错误！");
+            }
+            DataTable dt = JabMySqlHelper.ExecuteDataTable(Config.DBConnection, string.Format(sql, where), param.ToArray());
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                DataRow row = dt.Rows[0];
+                return new OrderInfo()
+                {
+                    ID = Converter.TryToInt64(row["ID"]),
+                    OrderNumber = Converter.TryToString(row["ORDER_NUM"]),
+                    SenderPhone = Converter.TryToString(row["SENDER_PHONE"]),
+                    SenderName = Converter.TryToString(row["SENDER_NAME"]),
+                    SenderAddress = Converter.TryToString(row["SENDER_ADDRESS"]),
+                    JBBWPhone = Converter.TryToString(row["JBBW_PHONE"]),
+                    JBBWName = Converter.TryToString(row["JBBW_NAME"]),
+                    JBBWAddress = Converter.TryToString(row["JBBW_ADDRESS"]),
+                    Remarks = Converter.TryToString(row["REMARKS"]),
+                    Weight = Converter.TryToString(row["WEIGHT"]),
+                    FlightNumber = Converter.TryToString(row["FLIGHT_NUM"]),
+                    LandingTime = string.IsNullOrEmpty(Converter.TryToString(row["LANDING_TIME"])) ? "" : Converter.TryToDateTime(row["LANDING_TIME"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                    Status = Converter.TryToString(row["STATUS"]),
+                    StatusStr = OrderStatus.GetStatus(Converter.TryToString(row["STATUS"])),
+                    BatchNo = Converter.TryToString(row["BATCH_NUMBER"]),
+                    CreateTime = Converter.TryToDateTime(row["CreateTime"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                    CreatedBy = Converter.TryToString(row["CreatedBy"]),
+                    UpdateTime = Converter.TryToDateTime(row["UpdateTime"]).ToString("yyyy-MM-dd HH:mm:ss"),
+                    UpdatedBy = Converter.TryToString(row["UpdateBy"]),
+                };
+            }
+            else
+            {
+                return null;
+            }
         }
 
         internal static List<OrderInfo> GetOrderList(OrderInfoParam searchParam, out int total)
@@ -126,7 +242,8 @@ namespace ExpressSystem.Api.BLL
                         JBBWName = Converter.TryToString(row["JBBW_NAME"]),
                         FlightNumber = Converter.TryToString(row["FLIGHT_NUM"]),
                         LandingTime = string.IsNullOrEmpty(Converter.TryToString(row["LANDING_TIME"])) ? "" : Converter.TryToDateTime(row["LANDING_TIME"]).ToString("yyyy-MM-dd HH:mm:ss"),
-                        Status = OrderStatus.GetStatus(Converter.TryToString(row["STATUS"])),
+                        Status = Converter.TryToString(row["STATUS"]),
+                        StatusStr = OrderStatus.GetStatus(Converter.TryToString(row["STATUS"])),
                         CreateTime = Converter.TryToDateTime(row["CreateTime"]).ToString("yyyy-MM-dd HH:mm:ss"),
                         CreatedBy = Converter.TryToString(row["ChineseName"])
                     });

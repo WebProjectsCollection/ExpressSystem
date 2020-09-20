@@ -32,6 +32,13 @@ namespace ExpressSystem.Api.Controllers
             return MyResult.OK(result);
         }
 
+        [HttpGet("detail")]
+        public MyResult GetDetail([FromQuery]OrderInfoParam param)
+        {
+            OrderInfo orderInfo = OrderBLL.GetOrderDetail(param);
+            return MyResult.OK(orderInfo);
+        }
+
         [HttpGet("batchNos")]
         public MyResult GetBatchNos()
         {
@@ -62,6 +69,13 @@ namespace ExpressSystem.Api.Controllers
             }
 
             bool re = OrderBLL.AddNewOrder(data);
+            return re ? MyResult.OK() : MyResult.Error();
+        }
+
+        [HttpPost("update")]
+        public MyResult Update([FromBody] OrderInfo data)
+        {
+            bool re = OrderBLL.UpdateOrder(data);
             return re ? MyResult.OK() : MyResult.Error();
         }
     }
