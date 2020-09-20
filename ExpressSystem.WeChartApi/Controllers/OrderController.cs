@@ -22,7 +22,7 @@ namespace ExpressSystem.WeChartApi.Controllers
             }
             if (string.IsNullOrWhiteSpace(data.SenderPhone))
             {
-                return MyResult.Error("寄件人姓名不能为空！");
+                return MyResult.Error("寄件人电话不能为空！");
             }
             if (string.IsNullOrWhiteSpace(data.JBBWName))
             {
