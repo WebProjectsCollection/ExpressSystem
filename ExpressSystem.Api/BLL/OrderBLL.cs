@@ -87,8 +87,7 @@ namespace ExpressSystem.Api.BLL
 
         internal static List<object> GetBatchNos()
         {
-            string sql = @" SELECT DISTINCT BATCH_NUMBER FROM  ex_orderinfo
-                            ORDER by CreateTime DESC ";
+            string sql = @" SELECT DISTINCT BATCH_NUMBER FROM  ex_orderinfo";
 
             DataTable dt = JabMySqlHelper.ExecuteDataTable(Config.DBConnection, sql);
             List<object> result = new List<object>();

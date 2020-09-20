@@ -12,11 +12,11 @@ namespace ExpressSystem.Api.Utilities
         {
             get
             {
-                string DBServer = Environment.GetEnvironmentVariable("DBServer") ?? ConfigurationManager.AppSettings["DBServer"];
-                string DBName = Environment.GetEnvironmentVariable("DBName") ?? ConfigurationManager.AppSettings["DBName"];
-                string DBUser = Environment.GetEnvironmentVariable("DBUser") ?? ConfigurationManager.AppSettings["DBUser"];
-                string DBPwd = Environment.GetEnvironmentVariable("DBPwd") ?? ConfigurationManager.AppSettings["DBPwd"];
-                string DBPort = Environment.GetEnvironmentVariable("DBPort") ?? ConfigurationManager.AppSettings["DBPort"];
+                string DBServer = ConfigurationManager.AppSettings["DBServer"];
+                string DBName = ConfigurationManager.AppSettings["DBName"];
+                string DBUser = ConfigurationManager.AppSettings["DBUser"];
+                string DBPwd = ConfigurationManager.AppSettings["DBPwd"];
+                string DBPort = ConfigurationManager.AppSettings["DBPort"];
 
                 return $"Server={DBServer};Database={DBName};User ID={DBUser};Password={DBPwd};port={DBPort};pooling=true;Charset=utf8";
 

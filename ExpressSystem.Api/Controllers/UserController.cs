@@ -85,7 +85,7 @@ namespace ExpressSystem.Api.Controllers
             {
                 DataTable dt = ExcelHelper.ReadExcelToDataTable(file.OpenReadStream(), "Sheet1");
 
-                MySqlHelper.ExecuteNonQuery(Config.DBConnection, "TRUNCATE TABLE tmp_importemployee");
+                JabMySqlHelper.ExecuteNonQuery(Config.DBConnection, "TRUNCATE TABLE tmp_importemployee");
 
                 string sql = @"INSERT INTO tmp_importemployee
                                 (`EmployeeID`,
@@ -143,9 +143,9 @@ namespace ExpressSystem.Api.Controllers
                 {
                     throw new Exception("导入人员信息为空！");
                 }
-                MySqlHelper.ExecuteNonQuery(Config.DBConnection, sql + string.Join(",", values));
+                JabMySqlHelper.ExecuteNonQuery(Config.DBConnection, sql + string.Join(",", values));
 
-                MySqlHelper.ExecuteNonQuery(Config.DBConnection, "call Sp_confirmEmployee()");
+                JabMySqlHelper.ExecuteNonQuery(Config.DBConnection, "call Sp_confirmEmployee()");
 
                 return Ok(new
                 {
