@@ -38,7 +38,7 @@ namespace ExpressSystem.WeChartApi.BLL
                 new MySqlParameter("@Status", OrderStatusEnum.Created),
                 new MySqlParameter("@UserName", data.UserName)) > 0;
             if (insertStuatus)
-                AddOrderStatus(data.OrderNumber, OrderStatusEnum.Created.ToString());
+                AddOrderStatus(data.OrderNumber, "1001");
             return true;
         }
 
