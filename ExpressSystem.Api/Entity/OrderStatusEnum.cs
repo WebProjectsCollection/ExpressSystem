@@ -45,8 +45,9 @@ namespace ExpressSystem.Api.Entity
                 case "1001": return "已下单";
                 case "1011": return "已揽件";
                 case "1012": return "已发货/运送中";
-                case "1013": return "到津待派送";
-                case "1014": return "派送中";
+                case "1013": return "快递已到津";
+                case "1014": return "快递已清关";
+                case "1015": return "派送中";
                 case "1021": return "已签收";
                 case "1031": return "已丢失";
                 default: return "--";
@@ -62,9 +63,10 @@ namespace ExpressSystem.Api.Entity
             {
                 case "1001": return "您的订单已录入，正在等待揽件";
                 case "1011": return "您的订单已被揽件，正在极速送往机场的路上";
-                case "1012": return "您的订单正在运输中，预计两个小时到津";
-                case "1013": return "您的订单已到津，正在等待派送";
-                case "1014": return "您的订单正在派送中，请保持电话通畅";
+                case "1012": return "您的订单正在运输中，预计" + DateTime.Now.AddDays(17).ToShortDateString() + "左右到津";
+                case "1013": return "您的订单已到津，正在准备清关";
+                case "1014": return "您的订单已清关，正在准备派送";
+                case "1015": return "您的订单正在派送中，请保持电话通畅";
                 case "1021": return "您的订单已签收，感谢您对飞箭国际快递的关注";
                 default: return "--";
             }
