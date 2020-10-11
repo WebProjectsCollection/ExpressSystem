@@ -40,6 +40,7 @@ namespace ExpressSystem.Api.Entity
         public long? ID { get; set; }
         public string OrderNumber { get; set; }
         public string KeyWord { get; set; }
+        public string BatchNo { get; set; }
         public string FlightNumber { get; set; }
         public string CreateTimeStartStr { get; set; }
         public string CreateTimeEndStr { get; set; }

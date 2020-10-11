@@ -55,14 +55,6 @@ namespace ExpressSystem.Api.Controllers
             {
                 return MyResult.Error("快递单号不能为空！");
             }
-            if (string.IsNullOrWhiteSpace(data.JBBWName))
-            {
-                return MyResult.Error("津巴布韦姓名不能为空！");
-            }
-            if (string.IsNullOrWhiteSpace(data.JBBWPhone))
-            {
-                return MyResult.Error("津巴布韦电话不能为空！");
-            }
             if (string.IsNullOrWhiteSpace(data.JBBWAddress))
             {
                 return MyResult.Error("津巴布韦地址不能为空！");
@@ -83,6 +75,13 @@ namespace ExpressSystem.Api.Controllers
         public MyResult BatchUpdateStatus([FromBody] OrderStatusParam param)
         {
             bool re = OrderBLL.BatchUpdateStatus(param);
+            return re ? MyResult.OK() : MyResult.Error();
+        }
+
+        [HttpPost("updateStatusByBatchNumber")]
+        public MyResult UpdateStatusByBatchNumber(string batchNumber, string action)
+        {
+            bool re = OrderBLL.UpdateStatusByBatchNumber(batchNumber, action);
             return re ? MyResult.OK() : MyResult.Error();
         }
     }

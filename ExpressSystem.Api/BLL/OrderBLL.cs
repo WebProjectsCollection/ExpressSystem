@@ -85,6 +85,55 @@ namespace ExpressSystem.Api.BLL
             return true;
         }
 
+        internal static bool UpdateStatusByBatchNumber(string batchNumber, string action)
+        {
+            // 根据action 获取 fromStatus、toStatus
+            string fromStatus; string toStatus;
+            switch (action)
+            {
+                case "gzconfirm":
+                    fromStatus = OrderStatusEnum.Created.ToString();
+                    toStatus = OrderStatusEnum.HasSend.ToString(); break;
+                case "airportconfirm":
+                    fromStatus = OrderStatusEnum.HasSend.ToString();
+                    toStatus = OrderStatusEnum.InFlight.ToString(); break;
+                case "jbbwconfirm":
+                    fromStatus = OrderStatusEnum.InFlight.ToString();
+                    toStatus = OrderStatusEnum.WaitDelivery.ToString(); break;
+                default:
+                    throw new MsgException("参数错误！");
+            }
+
+            // 根据batchNumber 查询订单信息
+            DataTable dt = JabMySqlHelper.ExecuteDataTable(Config.DBConnection, @" 
+                        SELECT ORDER_NUM,ID FROM ex_orderinfo
+                        WHERE BATCH_NUMBER=@BatchNumber and `STATUS`=@Status",
+                        new MySqlParameter("@BatchNumber", batchNumber),
+                        new MySqlParameter("@Status", fromStatus));
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                OrderStatusParam param = new OrderStatusParam();
+                param.Status = toStatus;
+                param.UserName = "system";
+                param.dicOrders = new List<OrderStatusParam.OrderInfo_F>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    param.dicOrders.Add(new OrderStatusParam.OrderInfo_F()
+                    {
+                        Id = Converter.TryToString(row["ID"]),
+                        Order_Num = Converter.TryToString(row["ORDER_NUM"])
+                    });
+                }
+                // 更新订单信息
+                return BatchUpdateStatus(param);
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         internal static List<object> GetBatchNos()
         {
             string sql = @" SELECT DISTINCT BATCH_NUMBER FROM  ex_orderinfo";
@@ -222,6 +271,11 @@ namespace ExpressSystem.Api.BLL
                 where += " AND o.CreateTime < @CreateTimeEnd";
                 param.Add(new MySqlParameter("@CreateTimeEnd", Convert.ToDateTime(searchParam.CreateTimeEndStr)));
             }
+            if (!string.IsNullOrEmpty(searchParam.BatchNo))
+            {
+                where += " AND BATCH_NUMBER = @BatchNo";
+                param.Add(new MySqlParameter("@BatchNo", searchParam.BatchNo));
+            }
             if (!string.IsNullOrEmpty(searchParam.FlightNumber))
             {
                 where += " AND FLIGHT_NUM = @FlightNumber";
@@ -264,7 +318,7 @@ namespace ExpressSystem.Api.BLL
         }
 
         /// <summary>
-        /// 机场确认
+        /// 修改订单状态
         /// </summary>
         /// <param name="dicOrders">订单id,订单号</param>
         /// <param name="status">状态</param>
