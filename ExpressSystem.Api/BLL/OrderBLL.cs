@@ -91,15 +91,15 @@ namespace ExpressSystem.Api.BLL
             string fromStatus; string toStatus;
             switch (batchParam.Action)
             {
-                case "gzconfirm":
-                    fromStatus = ((int)OrderStatusEnum.Created).ToString();
-                    toStatus = ((int)OrderStatusEnum.HasSend).ToString(); break;
                 case "airportconfirm":
                     fromStatus = ((int)OrderStatusEnum.HasSend).ToString();
                     toStatus = ((int)OrderStatusEnum.InFlight).ToString(); break;
                 case "jbbwconfirm":
                     fromStatus = ((int)OrderStatusEnum.InFlight).ToString();
-                    toStatus = ((int)OrderStatusEnum.WaitDelivery).ToString(); break;
+                    toStatus = ((int)OrderStatusEnum.ToJBBW).ToString(); break;
+                case "qingguanconfirm":
+                    fromStatus = ((int)OrderStatusEnum.ToJBBW).ToString();
+                    toStatus = ((int)OrderStatusEnum.QingGuan).ToString(); break;
                 default:
                     throw new MsgException("参数错误！");
             }

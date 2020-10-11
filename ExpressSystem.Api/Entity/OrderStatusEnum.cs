@@ -12,7 +12,7 @@ namespace ExpressSystem.Api.Entity
         /// </summary>
         Created = 1001,
         /// <summary>
-        /// 已揽件
+        /// 已发货
         /// </summary>
         HasSend = 1011,
         /// <summary>
@@ -20,13 +20,13 @@ namespace ExpressSystem.Api.Entity
         /// </summary>
         InFlight = 1012,
         /// <summary>
-        /// 到津待清关
+        /// 快递已到津
         /// </summary>
-        WaitDelivery = 1013,
+        ToJBBW = 1013,
         /// <summary>
-        /// 清关待派送
+        /// 快递已清关/待派送
         /// </summary>
-        Clearance = 1014,
+        QingGuan = 1014,
         /// <summary>
         /// 派送中
         /// </summary>
