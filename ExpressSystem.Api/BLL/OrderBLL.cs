@@ -241,7 +241,7 @@ namespace ExpressSystem.Api.BLL
             int rows = searchParam.PageSize;
 
             List<OrderInfo> recordList = new List<OrderInfo>();
-            string sql = @" SELECT o.ID, ORDER_NUM, JBBW_PHONE, JBBW_NAME,FLIGHT_NUM, LANDING_TIME, `STATUS`, o.CreateTime, e.ChineseName
+            string sql = @" SELECT o.ID, ORDER_NUM, BATCH_NUMBER,JBBW_PHONE, JBBW_NAME,FLIGHT_NUM, LANDING_TIME, `STATUS`, o.CreateTime, e.ChineseName
                             FROM ex_orderinfo o
                             LEFT JOIN mt_employee e ON o.CreatedBy = e.UserName 
                             {0}
@@ -297,6 +297,7 @@ namespace ExpressSystem.Api.BLL
                     {
                         ID = Converter.TryToInt64(row["ID"]),
                         OrderNumber = Converter.TryToString(row["ORDER_NUM"]),
+                        BatchNo = Converter.TryToString(row["BATCH_NUMBER"]),
                         JBBWPhone = Converter.TryToString(row["JBBW_PHONE"]),
                         JBBWName = Converter.TryToString(row["JBBW_NAME"]),
                         FlightNumber = Converter.TryToString(row["FLIGHT_NUM"]),
