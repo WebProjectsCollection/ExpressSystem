@@ -79,9 +79,9 @@ namespace ExpressSystem.Api.Controllers
         }
 
         [HttpPost("updateStatusByBatchNumber")]
-        public MyResult UpdateStatusByBatchNumber(string batchNumber, string action)
+        public MyResult UpdateStatusByBatchNumber([FromBody] BatchUpdateParam param)
         {
-            bool re = OrderBLL.UpdateStatusByBatchNumber(batchNumber, action);
+            bool re = OrderBLL.UpdateStatusByBatchNumber(param);
             return re ? MyResult.OK() : MyResult.Error();
         }
         [Produces("application/json")]

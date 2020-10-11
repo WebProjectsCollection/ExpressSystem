@@ -85,21 +85,21 @@ namespace ExpressSystem.Api.BLL
             return true;
         }
 
-        internal static bool UpdateStatusByBatchNumber(string batchNumber, string action)
+        internal static bool UpdateStatusByBatchNumber(BatchUpdateParam batchParam)
         {
             // 根据action 获取 fromStatus、toStatus
             string fromStatus; string toStatus;
-            switch (action)
+            switch (batchParam.Action)
             {
                 case "gzconfirm":
-                    fromStatus = OrderStatusEnum.Created.ToString();
-                    toStatus = OrderStatusEnum.HasSend.ToString(); break;
+                    fromStatus = ((int)OrderStatusEnum.Created).ToString();
+                    toStatus = ((int)OrderStatusEnum.HasSend).ToString(); break;
                 case "airportconfirm":
-                    fromStatus = OrderStatusEnum.HasSend.ToString();
-                    toStatus = OrderStatusEnum.InFlight.ToString(); break;
+                    fromStatus = ((int)OrderStatusEnum.HasSend).ToString();
+                    toStatus = ((int)OrderStatusEnum.InFlight).ToString(); break;
                 case "jbbwconfirm":
-                    fromStatus = OrderStatusEnum.InFlight.ToString();
-                    toStatus = OrderStatusEnum.WaitDelivery.ToString(); break;
+                    fromStatus = ((int)OrderStatusEnum.InFlight).ToString();
+                    toStatus = ((int)OrderStatusEnum.WaitDelivery).ToString(); break;
                 default:
                     throw new MsgException("参数错误！");
             }
@@ -108,14 +108,14 @@ namespace ExpressSystem.Api.BLL
             DataTable dt = JabMySqlHelper.ExecuteDataTable(Config.DBConnection, @" 
                         SELECT ORDER_NUM,ID FROM ex_orderinfo
                         WHERE BATCH_NUMBER=@BatchNumber and `STATUS`=@Status",
-                        new MySqlParameter("@BatchNumber", batchNumber),
+                        new MySqlParameter("@BatchNumber", batchParam.BatchNumber),
                         new MySqlParameter("@Status", fromStatus));
 
             if (dt != null && dt.Rows.Count > 0)
             {
                 OrderStatusParam param = new OrderStatusParam();
                 param.Status = toStatus;
-                param.UserName = "system";
+                param.UserName = batchParam.UserName;
                 param.dicOrders = new List<OrderStatusParam.OrderInfo_F>();
                 foreach (DataRow row in dt.Rows)
                 {

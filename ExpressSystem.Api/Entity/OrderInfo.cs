@@ -59,4 +59,12 @@ namespace ExpressSystem.Api.Entity
             public string Order_Num { get; set; }
         }
     }
+
+    public class BatchUpdateParam
+    {
+        public string BatchNumber { get; set; }
+        public string Action { get; set; }
+        public string UserName { get; set; }
+    }
+
 }
