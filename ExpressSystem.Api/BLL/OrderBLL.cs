@@ -328,15 +328,17 @@ namespace ExpressSystem.Api.BLL
         public static bool BatchUpdateStatus(OrderStatusParam param)
         {
             string ids = string.Join(",", param.dicOrders.Select(t => t.Id).ToList());
+            string updateInfo = param.Status == "1011" ? "BATCH_NUMBER = '" + DateTime.Now.ToString("第yyyyMMdd批") + "'," : "";
             bool upsucess = JabMySqlHelper.ExecuteNonQuery(Config.DBConnection,
-                     $@"UPDATE ex_orderinfo
+                 $@"UPDATE ex_orderinfo
                             SET
                                 STATUS = @Status,
                                 UpdateBy = @UserName,
+                                {updateInfo}
                                 UpdateTime = now()
                             WHERE ID IN ({ids});",
-                 new MySqlParameter("@Status", param.Status),
-                 new MySqlParameter("@UserName", param.UserName)) > 0;
+             new MySqlParameter("@Status", param.Status),
+             new MySqlParameter("@UserName", param.UserName)) > 0;
             if (upsucess)
             {
                 foreach (var item in param.dicOrders)
