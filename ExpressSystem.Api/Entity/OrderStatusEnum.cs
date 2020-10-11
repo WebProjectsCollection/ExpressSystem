@@ -20,13 +20,17 @@ namespace ExpressSystem.Api.Entity
         /// </summary>
         InFlight = 1012,
         /// <summary>
-        /// 待派送
+        /// 快递已到津
         /// </summary>
-        WaitDelivery = 1013,
+        ToJBBW = 1013,
+        /// <summary>
+        /// 快递已清关/待派送
+        /// </summary>
+        QingGuan = 1014,
         /// <summary>
         /// 派送中
         /// </summary>
-        Deliverying = 1014,
+        Deliverying = 1015,
         /// <summary>
         /// 已签收
         /// </summary>

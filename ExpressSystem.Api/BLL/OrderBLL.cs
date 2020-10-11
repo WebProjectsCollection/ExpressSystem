@@ -91,15 +91,15 @@ namespace ExpressSystem.Api.BLL
             string fromStatus; string toStatus;
             switch (batchParam.Action)
             {
-                case "gzconfirm":
-                    fromStatus = ((int)OrderStatusEnum.Created).ToString();
-                    toStatus = ((int)OrderStatusEnum.HasSend).ToString(); break;
                 case "airportconfirm":
                     fromStatus = ((int)OrderStatusEnum.HasSend).ToString();
                     toStatus = ((int)OrderStatusEnum.InFlight).ToString(); break;
                 case "jbbwconfirm":
                     fromStatus = ((int)OrderStatusEnum.InFlight).ToString();
-                    toStatus = ((int)OrderStatusEnum.WaitDelivery).ToString(); break;
+                    toStatus = ((int)OrderStatusEnum.ToJBBW).ToString(); break;
+                case "qingguanconfirm":
+                    fromStatus = ((int)OrderStatusEnum.ToJBBW).ToString();
+                    toStatus = ((int)OrderStatusEnum.QingGuan).ToString(); break;
                 default:
                     throw new MsgException("参数错误！");
             }
@@ -241,7 +241,7 @@ namespace ExpressSystem.Api.BLL
             int rows = searchParam.PageSize;
 
             List<OrderInfo> recordList = new List<OrderInfo>();
-            string sql = @" SELECT o.ID, ORDER_NUM, JBBW_PHONE, JBBW_NAME,FLIGHT_NUM, LANDING_TIME, `STATUS`, o.CreateTime, e.ChineseName
+            string sql = @" SELECT o.ID, ORDER_NUM, JBBW_PHONE, JBBW_NAME,FLIGHT_NUM, LANDING_TIME, `STATUS`, BATCH_NUMBER, o.CreateTime, e.ChineseName
                             FROM ex_orderinfo o
                             LEFT JOIN mt_employee e ON o.CreatedBy = e.UserName 
                             {0}
@@ -303,6 +303,7 @@ namespace ExpressSystem.Api.BLL
                         LandingTime = string.IsNullOrEmpty(Converter.TryToString(row["LANDING_TIME"])) ? "" : Converter.TryToDateTime(row["LANDING_TIME"]).ToString("yyyy-MM-dd HH:mm:ss"),
                         Status = Converter.TryToString(row["STATUS"]),
                         StatusStr = OrderStatus.GetStatus(Converter.TryToString(row["STATUS"])),
+                        BatchNo = Converter.TryToString(row["BATCH_NUMBER"]),
                         CreateTime = Converter.TryToDateTime(row["CreateTime"]).ToString("yyyy-MM-dd HH:mm:ss"),
                         CreatedBy = Converter.TryToString(row["ChineseName"])
                     });
