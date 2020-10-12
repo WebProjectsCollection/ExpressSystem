@@ -78,7 +78,7 @@ namespace ExpressSystem.Api.Utilities
                     else
                     {
                         object value = info.GetValue(rowItem);
-                        if (value != null && value.ToString()!= "0001/1/1 0:00:00")
+                        if (value != null && value.ToString() != "0001/1/1 0:00:00")
                             cell.SetCellValue(value.ToString());
                     }
                     cell.CellStyle = cellStyle;
@@ -208,6 +208,10 @@ namespace ExpressSystem.Api.Utilities
             for (int i = cellIndex; i < rowsCount; i++)
             {
                 cells = sheet.GetRow(i);
+                if (cells == null)
+                {
+                    break;
+                }
                 dr = dt.NewRow();
                 for (int j = 0; j < dt.Columns.Count; j++)
                 {
